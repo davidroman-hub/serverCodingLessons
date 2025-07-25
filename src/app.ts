@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import configs from "./configuration/config";
-const morgan = require('morgan');
-const config = require('config');
+const morgan = require("morgan");
+const config = require("config");
 const express = require("express");
 const Joi = require("joi");
 const app = express();
@@ -14,15 +14,15 @@ app.use(express.static("/public"));
 
 //enviroment config
 
-console.log('App' + config.get('name'))
-console.log('DB server from config' + config.get('configDB.host'))
+console.log("App" + config.get("name"));
+console.log("DB server from config" + config.get("configDB.host"));
 
 // Thrid party moddleware
 
-app.use(morgan('tiny'));
-
-console.log('morgan habiliktado')
-//app.use(log);
+if (app.get("env") === "development") {
+  app.use(morgan("tiny"));
+  console.log("morgan habilitado");
+}
 
 // app.use((req: Request, res: Response, next: import("express").NextFunction) => {
 //   console.log("authenticado");
@@ -108,6 +108,10 @@ app.delete("/users/:id", (req: Request, res: Response) => {
   users.splice(index, 1);
   res.send(users);
 });
+
+/// switch beetwen prod & dev cuando no se esta runeando el nodemoon
+// $ export NODE_ENV=production
+/// $ export NODE_ENV=develpment
 
 const port = process.env.PORT || 3000;
 
