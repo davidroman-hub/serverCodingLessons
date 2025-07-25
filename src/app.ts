@@ -1,4 +1,5 @@
 const express = require("express");
+const Joi = require("joi");
 const app = express();
 
 //POST
@@ -33,18 +34,23 @@ app.get("/users/:id", (req: Request, res: Response) => {
 });
 
 app.post("/users", (req: Request, res: Response) => {
-  if (!req.body.name || req.body.name.length <= 2) {
-    res.status(400).send("Debes Ingresar un nombre, un nombre que tenga minimo 3 letras");
-    /// return para no enviar dato vacio
-    return;
-  }
-  const user = {
-    id: users.length + 1,
-    name: req.body.name,
-  };
+  const schema = Joi.object({
+    name: Joi.string().min(3).max(30).required(),
+  });
 
-  users.push(user);
-  res.send(user);
+  const { error, value } = schema.validate({ name: req.body.name });
+  if (!error) {
+    const user = {
+      id: users.length + 1,
+      name: value.name,
+    };
+
+    users.push(user);
+    res.send(user);
+  } else {
+    const msj = error.details[0].message
+    res.status(400).send(msj);
+  }
 });
 
 const port = process.env.PORT || 3000;
