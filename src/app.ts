@@ -1,10 +1,18 @@
+import { Request, Response } from "express";
+
 const express = require("express");
 const Joi = require("joi");
 const app = express();
-import { Request, Response } from "express";
+const log = require("./logger");
 
 //POST
 app.use(express.json());
+app.use(log);
+
+app.use((req: Request, res: Response, next: import("express").NextFunction) => {
+  console.log("authenticado");
+  next();
+});
 
 const users = [
   { id: 1, name: "david" },
