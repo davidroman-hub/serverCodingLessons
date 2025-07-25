@@ -1,6 +1,7 @@
 const express = require("express");
 const Joi = require("joi");
 const app = express();
+import { Request, Response } from "express";
 
 //POST
 app.use(express.json());
@@ -10,8 +11,6 @@ const users = [
   { id: 2, name: "pancha" },
   { id: 3, name: "teo" },
 ];
-
-import { Request, Response } from "express";
 
 // GET
 
@@ -28,7 +27,7 @@ app.get("/api/usuarios/:id", (req: Request, res: Response) => {
 });
 
 app.get("/users/:id", (req: Request, res: Response) => {
-  let user = users.find((x) => x.id === Number(req.params.id));
+  let user = userExist(req);
   if (!user) {
     return res.status(404).send("Not user found");
   }
@@ -38,11 +37,7 @@ app.get("/users/:id", (req: Request, res: Response) => {
 // POST
 
 app.post("/users", (req: Request, res: Response) => {
-  const schema = Joi.object({
-    name: Joi.string().min(3).max(30).required(),
-  });
-
-  const { error, value } = schema.validate({ name: req.body.name });
+  const { error, value } = validateUser(req.body.name);
   if (!error) {
     const user = {
       id: users.length + 1,
@@ -61,15 +56,13 @@ app.post("/users", (req: Request, res: Response) => {
 
 app.put("/users/:id", (req: Request, res: Response) => {
   // Find if the user exist
-  let user = users.find((x) => x.id === Number(req.params.id));
+
+  let user = userExist(req);
   if (!user) {
     return res.status(404).send("Not user found");
   }
-  const schema = Joi.object({
-    name: Joi.string().min(3).max(30).required(),
-  });
 
-  const { error, value } = schema.validate({ name: req.body.name });
+  const { error, value } = validateUser(req.body.name);
   if (error) {
     const msj = error.details[0].message;
     res.status(400).send(msj);
@@ -80,8 +73,22 @@ app.put("/users/:id", (req: Request, res: Response) => {
   res.send(user);
 });
 
+// DELETE
+
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
   console.log(`listenin in the ports ${port}..`);
 });
+
+const userExist = (req: Request) => {
+  return users.find((x) => x.id === Number(req.params.id));
+};
+
+const validateUser = (name: string) => {
+  const schema = Joi.object({
+    name: Joi.string().min(3).max(30).required(),
+  });
+
+  return schema.validate({ name });
+};
