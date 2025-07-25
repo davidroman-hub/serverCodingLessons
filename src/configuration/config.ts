@@ -7,9 +7,9 @@ interface Config {
   nodeEnv: string;
 }
 
-const config: Config = {
+const configs: Config = {
   port: Number(process.env.PORT) || 3000,
   nodeEnv: process.env.NODE_ENV || "development",
 };
 
-export default config;
+export default configs;

@@ -1,0 +1,6 @@
+{
+  "name": "Api rest Expres dev",
+  "configDB": {
+    "host": "test-db-server"
+  }
+}

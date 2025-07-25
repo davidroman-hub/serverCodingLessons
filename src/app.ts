@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
-
+import configs from "./configuration/config";
+const morgan = require('morgan');
+const config = require('config');
 const express = require("express");
 const Joi = require("joi");
 const app = express();
@@ -8,12 +10,24 @@ const log = require("./logger");
 //POST
 app.use(express.json());
 app.use(express.urlencoded({ extends: true })); /// para mandarlo como en react
-app.use(log);
+app.use(express.static("/public"));
 
-app.use((req: Request, res: Response, next: import("express").NextFunction) => {
-  console.log("authenticado");
-  next();
-});
+//enviroment config
+
+console.log('App' + config.get('name'))
+console.log('DB server from config' + config.get('configDB.host'))
+
+// Thrid party moddleware
+
+app.use(morgan('tiny'));
+
+console.log('morgan habiliktado')
+//app.use(log);
+
+// app.use((req: Request, res: Response, next: import("express").NextFunction) => {
+//   console.log("authenticado");
+//   next();
+// });
 
 const users = [
   { id: 1, name: "david" },
@@ -97,7 +111,7 @@ app.delete("/users/:id", (req: Request, res: Response) => {
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
+app.listen(configs.port, () => {
   console.log(`listenin in the ports ${port}..`);
 });
 
