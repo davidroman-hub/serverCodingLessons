@@ -75,6 +75,17 @@ app.put("/users/:id", (req: Request, res: Response) => {
 
 // DELETE
 
+app.delete("/users/:id", (req: Request, res: Response) => {
+  let user = userExist(req);
+  if (!user) {
+    return res.status(404).send("Not user found");
+  }
+
+  const index = users.indexOf(user);
+  users.splice(index, 1);
+  res.send(users);
+});
+
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
