@@ -32,15 +32,19 @@ app.get("/users/:id", (req: Request, res: Response) => {
   res.send(user);
 });
 
-
 app.post("/users", (req: Request, res: Response) => {
+  if (!req.body.name || req.body.name.length <= 2) {
+    res.status(400).send("Debes Ingresar un nombre, un nombre que tenga minimo 3 letras");
+    /// return para no enviar dato vacio
+    return;
+  }
   const user = {
     id: users.length + 1,
     name: req.body.name,
   };
 
   users.push(user);
-  res.send(user)
+  res.send(user);
 });
 
 const port = process.env.PORT || 3000;
