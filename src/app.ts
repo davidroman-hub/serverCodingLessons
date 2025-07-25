@@ -7,6 +7,7 @@ const log = require("./logger");
 
 //POST
 app.use(express.json());
+app.use(express.urlencoded({ extends: true })); /// para mandarlo como en react
 app.use(log);
 
 app.use((req: Request, res: Response, next: import("express").NextFunction) => {
